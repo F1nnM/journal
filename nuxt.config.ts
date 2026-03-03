@@ -7,7 +7,12 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     databaseUrl: '',
-    session: { password: '' },
+    session: {
+      password: '',
+      cookie: {
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      },
+    },
     oauth: {
       oidc: {
         clientId: '',
@@ -17,5 +22,15 @@ export default defineNuxtConfig({
       },
     },
     public: {},
+  },
+  routeRules: {
+    '/**': {
+      headers: {
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+      },
+    },
   },
 })

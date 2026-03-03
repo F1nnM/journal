@@ -4,7 +4,7 @@ export default defineOAuthOidcEventHandler({
   config: {
     scope: ['openid', 'profile', 'email'],
   },
-  async onSuccess(event, { user: oidcUser, tokens }) {
+  async onSuccess(event, { user: oidcUser }) {
     const rows = await db
       .insert(users)
       .values({
@@ -32,16 +32,12 @@ export default defineOAuthOidcEventHandler({
         email: dbUser.email ?? '',
       },
       loggedInAt: Date.now(),
-      secure: {
-        accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token,
-      },
     })
 
     return sendRedirect(event, '/')
   },
   onError(event, error) {
-    console.error('OIDC auth error:', error)
+    console.error('OIDC auth error:', error.message)
     return sendRedirect(event, '/login')
   },
 })

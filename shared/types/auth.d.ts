@@ -10,10 +10,6 @@ declare module '#auth-utils' {
     loggedInAt: number
   }
 
-  interface SecureSessionData {
-    accessToken: string
-    refreshToken?: string
-  }
 }
 
 export {}

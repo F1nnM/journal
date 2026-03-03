@@ -9,7 +9,7 @@ export const entriesRouter = router({
   save: protectedProcedure
     .input(z.object({
       date: dateString,
-      content: z.string(),
+      content: z.string().max(100_000),
     }))
     .mutation(async ({ ctx, input }) => {
       const [entry] = await ctx.db
@@ -48,8 +48,8 @@ export const entriesRouter = router({
 
   listDates: protectedProcedure
     .input(z.object({
-      year: z.number(),
-      month: z.number(),
+      year: z.number().int().min(1900).max(2100),
+      month: z.number().int().min(1).max(12),
     }))
     .query(async ({ ctx, input }) => {
       const startDate = `${input.year}-${String(input.month).padStart(2, '0')}-01`
@@ -71,7 +71,7 @@ export const entriesRouter = router({
 
   search: protectedProcedure
     .input(z.object({
-      query: z.string().min(1),
+      query: z.string().min(1).max(500),
     }))
     .query(async ({ ctx, input }) => {
       const tsQuery = sql`plainto_tsquery('english', ${input.query})`

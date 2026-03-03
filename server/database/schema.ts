@@ -12,7 +12,7 @@ export const users = pgTable('users', {
 
 export const entries = pgTable('entries', {
   id: uuid('id').defaultRandom().primaryKey(),
-  userId: uuid('user_id').notNull().references(() => users.id),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   date: date('date', { mode: 'string' }).notNull(),
   content: text('content').notNull().default(''),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),

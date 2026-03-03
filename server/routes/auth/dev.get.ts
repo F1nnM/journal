@@ -1,6 +1,10 @@
 import { users } from '~~/server/database/schema'
 
 export default defineEventHandler(async (event) => {
+  if (process.env.NODE_ENV === 'production') {
+    throw createError({ statusCode: 404, statusMessage: 'Not found' })
+  }
+
   const config = useRuntimeConfig()
 
   // Only active when OIDC is not configured
