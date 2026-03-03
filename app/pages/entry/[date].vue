@@ -47,7 +47,7 @@ watch(
 )
 
 // Auto-save
-const { status: saveStatus, debouncedSave, immediateSave } = useAutoSave(async () => {
+const { status: saveStatus, pending: savePending, debouncedSave, immediateSave } = useAutoSave(async () => {
   await $trpc.entries.save.mutate({
     date: date.value,
     content: content.value,
@@ -117,13 +117,10 @@ onUnmounted(() => {
   window.visualViewport?.removeEventListener('resize', onViewportResize)
 })
 
-const saveStatusText = computed(() => {
-  switch (saveStatus.value) {
-    case 'saving': return 'Saving...'
-    case 'saved': return 'Saved'
-    case 'error': return 'Error'
-    default: return ''
-  }
+const dotColor = computed(() => {
+  if (saveStatus.value === 'error') return 'bg-red-400'
+  if (saveStatus.value === 'saving' || savePending.value) return 'bg-orange-400'
+  return 'bg-green-400'
 })
 </script>
 
@@ -134,20 +131,7 @@ const saveStatusText = computed(() => {
       <span class="text-sm text-stone-400 dark:text-stone-500">
         {{ formattedDate }}
       </span>
-      <Transition name="status-fade">
-        <span
-          v-if="saveStatusText"
-          :key="saveStatusText"
-          class="text-xs"
-          :class="[
-            saveStatus === 'error'
-              ? 'text-red-400 dark:text-red-500'
-              : 'text-stone-400 dark:text-stone-500',
-          ]"
-        >
-          {{ saveStatusText }}
-        </span>
-      </Transition>
+      <span class="h-2 w-2 rounded-full transition-colors duration-300" :class="dotColor" />
     </div>
 
     <!-- Content area -->
@@ -194,13 +178,3 @@ const saveStatusText = computed(() => {
   </div>
 </template>
 
-<style scoped>
-.status-fade-enter-active,
-.status-fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.status-fade-enter-from,
-.status-fade-leave-to {
-  opacity: 0;
-}
-</style>

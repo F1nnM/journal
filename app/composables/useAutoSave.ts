@@ -1,14 +1,14 @@
 export function useAutoSave(saveFn: () => Promise<void>, delay = 500) {
   const status = ref<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const pending = ref(false)
 
   let timer: ReturnType<typeof setTimeout> | null = null
   let savedTimer: ReturnType<typeof setTimeout> | null = null
-  let pending = false
   let saving = false
   let saveAgain = false
 
   async function doSave() {
-    pending = false
+    pending.value = false
     timer = null
 
     if (saving) {
@@ -42,7 +42,7 @@ export function useAutoSave(saveFn: () => Promise<void>, delay = 500) {
   }
 
   function debouncedSave() {
-    pending = true
+    pending.value = true
     if (timer) clearTimeout(timer)
     timer = setTimeout(doSave, delay)
   }
@@ -52,7 +52,7 @@ export function useAutoSave(saveFn: () => Promise<void>, delay = 500) {
       clearTimeout(timer)
       timer = null
     }
-    if (pending || saving) {
+    if (pending.value || saving) {
       await doSave()
     }
   }
@@ -75,5 +75,5 @@ export function useAutoSave(saveFn: () => Promise<void>, delay = 500) {
     })
   }
 
-  return { status: readonly(status), debouncedSave, immediateSave }
+  return { status: readonly(status), pending: readonly(pending), debouncedSave, immediateSave }
 }
