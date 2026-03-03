@@ -105,17 +105,9 @@ function nextMonth() {
   }
 }
 
-function goToToday() {
-  const now = new Date()
-  currentYear.value = now.getFullYear()
-  currentMonth.value = now.getMonth() + 1
-}
-
 function onDayClick(cell: CalendarCell) {
   navigateTo(`/entry/${cell.date}`)
 }
-
-defineExpose({ goToToday })
 </script>
 
 <template>

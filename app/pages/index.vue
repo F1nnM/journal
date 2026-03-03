@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { Search, CalendarDays, Sun, Moon, LogOut } from 'lucide-vue-next'
+import { Search, Sun, Moon, LogOut } from 'lucide-vue-next'
 
 const { $trpc } = useNuxtApp()
 const { clear } = useUserSession()
 const colorMode = useColorMode()
 
 const searchQuery = ref('')
-const calendarRef = ref<{ goToToday: () => void } | null>(null)
+const searchInputRef = ref<HTMLInputElement | null>(null)
 
 // Search functionality
 const searchResults = ref<Array<{ id: string; date: string; snippet: string }>>([])
@@ -57,9 +57,8 @@ async function logout() {
   navigateTo('/login')
 }
 
-function goToToday() {
-  searchQuery.value = ''
-  calendarRef.value?.goToToday()
+function focusSearch() {
+  searchInputRef.value?.focus()
 }
 
 const isSearching = computed(() => searchQuery.value.trim().length > 0)
@@ -75,6 +74,7 @@ const isSearching = computed(() => searchQuery.value.trim().length > 0)
           class="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 dark:text-stone-500"
         />
         <input
+          ref="searchInputRef"
           v-model="searchQuery"
           type="text"
           placeholder="Search entries..."
@@ -92,13 +92,13 @@ const isSearching = computed(() => searchQuery.value.trim().length > 0)
           </div>
           <SearchResults v-else :results="searchResults" />
         </div>
-        <Calendar v-else key="calendar" ref="calendarRef" />
+        <Calendar v-else key="calendar" />
       </Transition>
     </div>
 
     <!-- Bottom bar -->
     <BottomBar>
-      <BottomBarButton :icon="CalendarDays" @click="goToToday" />
+      <BottomBarButton :icon="Search" @click="focusSearch" />
       <BottomBarButton
         :key="colorMode.value"
         :icon="colorMode.value === 'dark' ? Sun : Moon"
