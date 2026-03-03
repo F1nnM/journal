@@ -22,7 +22,7 @@ for _r in _rendered:
             _image = _c.get('image', '')
             if _image.startswith(_registry_prefix):
                 docker_build(
-                    _image.split(':')[0],
+                    _image.rsplit(':', 1)[0],
                     context='.',
                     dockerfile='Dockerfile.dev',
                     live_update=[sync('.', '/app')],

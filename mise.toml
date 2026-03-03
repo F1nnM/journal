@@ -2,6 +2,7 @@
 node = "22"
 tilt = "latest"
 ctlptl = "latest"
+k3d = "latest"
 
 [tasks.start]
 dir = "."
