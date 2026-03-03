@@ -1,0 +1,39 @@
+{{- if .Values.cnpg.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "journal.fullname" . }}-postgres
+  labels:
+    {{- include "journal.labels" . | nindent 4 }}
+spec:
+  instances: {{ .Values.cnpg.instances }}
+  storage:
+    size: {{ .Values.cnpg.storage.size }}
+  {{- if .Values.cnpg.backup.enabled }}
+  backup:
+    barmanObjectStore:
+      destinationPath: {{ .Values.cnpg.backup.destinationPath | quote }}
+      s3Credentials:
+        accessKeyId:
+          name: {{ .Values.cnpg.backup.s3Credentials.accessKeyId.name | quote }}
+          key: {{ .Values.cnpg.backup.s3Credentials.accessKeyId.key | quote }}
+        secretAccessKey:
+          name: {{ .Values.cnpg.backup.s3Credentials.secretAccessKey.name | quote }}
+          key: {{ .Values.cnpg.backup.s3Credentials.secretAccessKey.key | quote }}
+    retentionPolicy: "30d"
+  {{- end }}
+---
+{{- if .Values.cnpg.backup.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: {{ include "journal.fullname" . }}-backup
+  labels:
+    {{- include "journal.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.cnpg.backup.schedule | quote }}
+  cluster:
+    name: {{ include "journal.fullname" . }}-postgres
+  backupOwnerReference: self
+{{- end }}
+{{- end }}

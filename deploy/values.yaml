@@ -1,0 +1,48 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/f1nnm/journal
+  tag: latest
+  pullPolicy: IfNotPresent
+
+database:
+  url: ""  # Required when cnpg.enabled is false
+
+oidc:
+  issuerUrl: ""
+  clientId: ""
+  clientSecret: ""
+  redirectUrl: ""
+
+session:
+  password: ""  # Required: at least 32 chars
+
+cnpg:
+  enabled: false
+  instances: 1
+  storage:
+    size: 5Gi
+  backup:
+    enabled: false
+    schedule: "0 0 * * *"
+    destinationPath: ""
+    s3Credentials:
+      accessKeyId:
+        name: ""
+        key: ""
+      secretAccessKey:
+        name: ""
+        key: ""
+
+ingress:
+  enabled: true
+  className: nginx
+  host: ""
+  annotations: {}
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 64Mi
+  limits:
+    memory: 256Mi

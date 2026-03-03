@@ -1,0 +1,9 @@
+apiVersion: ctlptl.dev/v1alpha1
+kind: Registry
+name: journal-registry
+port: 5050
+---
+apiVersion: ctlptl.dev/v1alpha1
+kind: Cluster
+product: k3d
+registry: journal-registry

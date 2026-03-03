@@ -1,0 +1,17 @@
+image:
+  repository: localhost:5050/journal
+  tag: latest
+  pullPolicy: Always
+
+cnpg:
+  enabled: false
+
+database:
+  url: "postgresql://journal:journal@journal-postgres:5432/journal"
+
+ingress:
+  enabled: false
+
+resources:
+  requests: null
+  limits: null

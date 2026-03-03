@@ -1,0 +1,8 @@
+oidc:
+  issuerUrl: ""
+  clientId: ""
+  clientSecret: ""
+  redirectUrl: ""
+
+session:
+  password: "dev-session-password-at-least-32-characters-long"
