@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Search, CalendarDays, Sun, Moon, LogOut } from 'lucide-vue-next'
+import { Search, CalendarDays, Sun, Moon, LogOut, Maximize, Minimize } from 'lucide-vue-next'
 
 const { $trpc } = useNuxtApp()
 const { clear } = useUserSession()
 const colorMode = useColorMode()
+const { isFullscreen, toggle: toggleFullscreen } = useFullscreen()
 
 const searchQuery = ref('')
 const searchInputRef = ref<HTMLInputElement | null>(null)
@@ -109,6 +110,7 @@ const isSearching = computed(() => searchQuery.value.trim().length > 0)
         :icon="colorMode.value === 'dark' ? Sun : Moon"
         @click="toggleTheme"
       />
+      <BottomBarButton :icon="isFullscreen ? Minimize : Maximize" @click="toggleFullscreen" />
       <BottomBarButton :icon="LogOut" @click="logout" />
     </BottomBar>
   </div>

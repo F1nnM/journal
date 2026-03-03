@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ChevronLeft, Pencil, Eye, Sun, Moon } from 'lucide-vue-next'
+import { ChevronLeft, Pencil, Eye, Sun, Moon, Maximize, Minimize } from 'lucide-vue-next'
 
 const route = useRoute()
 const { $trpc } = useNuxtApp()
 const colorMode = useColorMode()
+const { isFullscreen, toggle: toggleFullscreen } = useFullscreen()
 
 const date = computed(() => route.params.date as string)
 
@@ -188,6 +189,7 @@ const saveStatusText = computed(() => {
         :icon="colorMode.value === 'dark' ? Sun : Moon"
         @click="toggleTheme"
       />
+      <BottomBarButton :icon="isFullscreen ? Minimize : Maximize" @click="toggleFullscreen" />
     </BottomBar>
   </div>
 </template>

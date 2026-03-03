@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  modules: ['nuxt-auth-utils', '@nuxtjs/tailwindcss', '@nuxtjs/color-mode'],
+  modules: ['nuxt-auth-utils', '@nuxtjs/tailwindcss', '@nuxtjs/color-mode', '@vite-pwa/nuxt'],
   colorMode: { classSuffix: '' },
   build: {
     transpile: ['nuxt'],
@@ -22,6 +22,24 @@ export default defineNuxtConfig({
       },
     },
     public: {},
+  },
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'Journal',
+      short_name: 'Journal',
+      description: 'A minimalist personal journal',
+      theme_color: '#1c1917',
+      background_color: '#1c1917',
+      display: 'standalone',
+      icons: [
+        { src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+        { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+      ],
+    },
+    workbox: {
+      navigateFallback: undefined,
+    },
   },
   routeRules: {
     '/**': {
