@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Search, Sun, Moon, LogOut } from 'lucide-vue-next'
+import { Search, CalendarDays, Sun, Moon, LogOut } from 'lucide-vue-next'
 
 const { $trpc } = useNuxtApp()
 const { clear } = useUserSession()
@@ -57,8 +57,13 @@ async function logout() {
   navigateTo('/login')
 }
 
-function focusSearch() {
-  searchInputRef.value?.focus()
+function toggleSearch() {
+  if (isSearching.value) {
+    searchQuery.value = ''
+    searchInputRef.value?.blur()
+  } else {
+    searchInputRef.value?.focus()
+  }
 }
 
 const isSearching = computed(() => searchQuery.value.trim().length > 0)
@@ -98,7 +103,7 @@ const isSearching = computed(() => searchQuery.value.trim().length > 0)
 
     <!-- Bottom bar -->
     <BottomBar>
-      <BottomBarButton :icon="Search" @click="focusSearch" />
+      <BottomBarButton :icon="isSearching ? CalendarDays : Search" @click="toggleSearch" />
       <BottomBarButton
         :key="colorMode.value"
         :icon="colorMode.value === 'dark' ? Sun : Moon"
