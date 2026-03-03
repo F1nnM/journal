@@ -6,13 +6,14 @@ const { clear } = useUserSession()
 const colorMode = useColorMode()
 
 const searchQuery = ref('')
-const calendarRef = ref<InstanceType<typeof Calendar> | null>(null)
+const calendarRef = ref<{ goToToday: () => void } | null>(null)
 
 // Search functionality
 const searchResults = ref<Array<{ id: string; date: string; snippet: string }>>([])
 const searching = ref(false)
 
 let searchTimer: ReturnType<typeof setTimeout> | null = null
+let searchSeq = 0
 
 watch(searchQuery, (query) => {
   if (searchTimer) clearTimeout(searchTimer)
@@ -23,17 +24,28 @@ watch(searchQuery, (query) => {
     return
   }
 
-  searching.value = true
+  const seq = ++searchSeq
   searchTimer = setTimeout(async () => {
+    searching.value = true
     try {
       const results = await $trpc.entries.search.query({ query: query.trim() })
-      searchResults.value = results
+      if (seq === searchSeq) {
+        searchResults.value = results
+      }
     } catch {
-      searchResults.value = []
+      if (seq === searchSeq) {
+        searchResults.value = []
+      }
     } finally {
-      searching.value = false
+      if (seq === searchSeq) {
+        searching.value = false
+      }
     }
   }, 300)
+})
+
+onUnmounted(() => {
+  if (searchTimer) clearTimeout(searchTimer)
 })
 
 function toggleTheme() {
@@ -51,9 +63,6 @@ function goToToday() {
 }
 
 const isSearching = computed(() => searchQuery.value.trim().length > 0)
-
-// Calendar component reference
-const Calendar = resolveComponent('Calendar')
 </script>
 
 <template>

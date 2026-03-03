@@ -55,6 +55,15 @@ const { status: saveStatus, debouncedSave, immediateSave } = useAutoSave(async (
 
 function onInput() {
   debouncedSave()
+  autoResize()
+}
+
+function autoResize() {
+  const el = textareaRef.value
+  if (el) {
+    el.style.height = 'auto'
+    el.style.height = el.scrollHeight + 'px'
+  }
 }
 
 async function toggleMode() {
@@ -81,6 +90,7 @@ watch(editing, (isEditing) => {
   if (isEditing) {
     nextTick(() => {
       textareaRef.value?.focus()
+      autoResize()
     })
   }
 })
@@ -130,7 +140,7 @@ const saveStatusText = computed(() => {
           v-if="editing"
           ref="textareaRef"
           v-model="content"
-          class="h-full w-full resize-none bg-transparent px-6 py-2 text-lg leading-relaxed text-stone-700 placeholder-stone-300 outline-none dark:text-stone-200 dark:placeholder-stone-600"
+          class="min-h-full w-full resize-none bg-transparent px-6 py-2 text-lg leading-relaxed text-stone-700 placeholder-stone-300 outline-none dark:text-stone-200 dark:placeholder-stone-600"
           placeholder="Write something..."
           @input="onInput"
         />

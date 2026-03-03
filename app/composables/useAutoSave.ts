@@ -4,10 +4,19 @@ export function useAutoSave(saveFn: () => Promise<void>, delay = 500) {
   let timer: ReturnType<typeof setTimeout> | null = null
   let savedTimer: ReturnType<typeof setTimeout> | null = null
   let pending = false
+  let saving = false
+  let saveAgain = false
 
   async function doSave() {
     pending = false
     timer = null
+
+    if (saving) {
+      saveAgain = true
+      return
+    }
+
+    saving = true
     status.value = 'saving'
 
     try {
@@ -23,6 +32,12 @@ export function useAutoSave(saveFn: () => Promise<void>, delay = 500) {
       }, 2000)
     } catch {
       status.value = 'error'
+    } finally {
+      saving = false
+      if (saveAgain) {
+        saveAgain = false
+        await doSave()
+      }
     }
   }
 
@@ -37,7 +52,7 @@ export function useAutoSave(saveFn: () => Promise<void>, delay = 500) {
       clearTimeout(timer)
       timer = null
     }
-    if (pending) {
+    if (pending || saving) {
       await doSave()
     }
   }
