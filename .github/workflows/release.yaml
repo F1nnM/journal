@@ -58,7 +58,7 @@ jobs:
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Bake image tag into chart
-        run: sed -i "s/tag: latest/tag: ${{ github.sha }}/" deploy/values.yaml
+        run: 'sed -i "s/tag: latest/tag: ${{ github.sha }}/" deploy/values.yaml'
 
       - name: Publish SHA-versioned chart
         run: |
