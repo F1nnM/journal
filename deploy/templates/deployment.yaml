@@ -23,19 +23,16 @@ spec:
               containerPort: 3000
               protocol: TCP
           env:
-            {{- if .Values.cnpg.enabled }}
-            - name: DATABASE_URL
+            - name: NUXT_DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "journal.fullname" . }}-postgres-app
-                  key: uri
-            {{- else }}
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
+                  {{- if .Values.database.existingSecret.name }}
+                  name: {{ .Values.database.existingSecret.name | quote }}
+                  key: {{ .Values.database.existingSecret.key | quote }}
+                  {{- else }}
                   name: {{ include "journal.fullname" . }}
                   key: database-url
-            {{- end }}
+                  {{- end }}
             - name: NUXT_SESSION_PASSWORD
               valueFrom:
                 secretKeyRef:

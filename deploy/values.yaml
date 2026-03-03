@@ -6,7 +6,10 @@ image:
   pullPolicy: IfNotPresent
 
 database:
-  url: ""  # Required when cnpg.enabled is false
+  url: ""  # Required unless existingSecret is set
+  existingSecret:
+    name: ""  # If set, read DATABASE_URL from this secret instead
+    key: uri
 
 oidc:
   issuerUrl: ""
@@ -16,23 +19,6 @@ oidc:
 
 session:
   password: ""  # Required: at least 32 chars
-
-cnpg:
-  enabled: false
-  instances: 1
-  storage:
-    size: 5Gi
-  backup:
-    enabled: false
-    schedule: "0 0 * * *"
-    destinationPath: ""
-    s3Credentials:
-      accessKeyId:
-        name: ""
-        key: ""
-      secretAccessKey:
-        name: ""
-        key: ""
 
 ingress:
   enabled: true
