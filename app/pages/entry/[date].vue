@@ -143,6 +143,7 @@ const saveStatusText = computed(() => {
           class="min-h-full w-full resize-none bg-transparent px-6 py-2 text-lg leading-relaxed text-stone-700 placeholder-stone-300 outline-none dark:text-stone-200 dark:placeholder-stone-600"
           placeholder="Write something..."
           @input="onInput"
+          @blur="immediateSave(); editing = false"
         />
 
         <!-- Read mode -->
