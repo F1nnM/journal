@@ -100,6 +100,7 @@ const isSearching = computed(() => searchQuery.value.trim().length > 0)
     <BottomBar>
       <BottomBarButton :icon="CalendarDays" @click="goToToday" />
       <BottomBarButton
+        :key="colorMode.value"
         :icon="colorMode.value === 'dark' ? Sun : Moon"
         @click="toggleTheme"
       />

@@ -163,6 +163,7 @@ const saveStatusText = computed(() => {
         @click="toggleMode"
       />
       <BottomBarButton
+        :key="colorMode.value"
         :icon="colorMode.value === 'dark' ? Sun : Moon"
         @click="toggleTheme"
       />
