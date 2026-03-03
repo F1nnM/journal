@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { Search, CalendarDays, Sun, Moon, LogOut, Maximize, Minimize, Download } from 'lucide-vue-next'
 
-const { $trpc } = useNuxtApp()
+const { $trpc, $pwa } = useNuxtApp()
 const { clear } = useUserSession()
 const colorMode = useColorMode()
 const { isFullscreen, toggle: toggleFullscreen } = useFullscreen()
-const { canInstall, install: installPwa } = usePwaInstall()
 
 const searchQuery = ref('')
 const searchInputRef = ref<HTMLInputElement | null>(null)
@@ -112,7 +111,7 @@ const isSearching = computed(() => searchQuery.value.trim().length > 0)
         @click="toggleTheme"
       />
       <BottomBarButton :icon="isFullscreen ? Minimize : Maximize" @click="toggleFullscreen" />
-      <BottomBarButton v-if="canInstall" :icon="Download" @click="installPwa" />
+      <BottomBarButton v-if="$pwa?.showInstallPrompt" :icon="Download" @click="$pwa?.install()" />
       <BottomBarButton :icon="LogOut" @click="logout" />
     </BottomBar>
   </div>

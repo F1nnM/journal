@@ -23,9 +23,22 @@ export default defineNuxtConfig({
     },
     public: {},
   },
+  app: {
+    head: {
+      meta: [
+        { name: 'theme-color', content: '#1c1917' },
+      ],
+      link: [
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      ],
+    },
+  },
   pwa: {
     registerType: 'autoUpdate',
     includeAssets: ['apple-touch-icon.png'],
+    client: {
+      installPrompt: true,
+    },
     manifest: {
       name: 'Journal',
       short_name: 'Journal',
