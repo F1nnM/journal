@@ -129,6 +129,21 @@ The `database.existingSecret` option is useful when the database URL is provided
 
 ### CI/CD
 
-The GitHub Actions workflow (`.github/workflows/release.yaml`) runs on push to `main` and:
-1. Builds and pushes the Docker image to `ghcr.io/f1nnm/journal`
-2. Packages and pushes the Helm chart to `oci://ghcr.io/f1nnm/journal-charts`
+The GitHub Actions workflow (`.github/workflows/release.yaml`) runs on push to `main` and on GitHub releases.
+
+**On every push to main:**
+- Docker image pushed as `ghcr.io/f1nnm/journal:latest` and `:$sha`
+- Helm chart published as `0.0.0` (rolling latest) and `0.0.0-$sha` (pinnable)
+- The git SHA is baked into the chart's default image tag, so deployments referencing `0.0.0` always get the matching image
+
+**On GitHub release (e.g. tag `v1.2.3`):**
+- Docker image additionally tagged as `:1.2.3`
+- Helm chart additionally published as `1.2.3`
+
+#### Versioning strategy
+
+| Chart version | Use case |
+|---|---|
+| `0.0.0` | Rolling latest, tracks `main` — use for continuous delivery |
+| `0.0.0-<sha>` | Pin to a specific commit |
+| `x.y.z` | Pin to a GitHub release |

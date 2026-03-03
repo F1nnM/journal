@@ -3,6 +3,8 @@ name: Release
 on:
   push:
     branches: [main]
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -10,6 +12,7 @@ permissions:
 
 env:
   IMAGE: ghcr.io/f1nnm/journal
+  CHART_REPO: oci://ghcr.io/f1nnm/journal-charts
 
 jobs:
   docker:
@@ -25,12 +28,22 @@ jobs:
 
       - uses: docker/setup-buildx-action@v3
 
+      - name: Determine tags
+        id: tags
+        run: |
+          TAGS="${{ env.IMAGE }}:${{ github.sha }}"
+          TAGS="$TAGS,${{ env.IMAGE }}:latest"
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            VERSION="${{ github.event.release.tag_name }}"
+            VERSION="${VERSION#v}"
+            TAGS="$TAGS,${{ env.IMAGE }}:$VERSION"
+          fi
+          echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
+
       - uses: docker/build-push-action@v6
         with:
           push: true
-          tags: |
-            ${{ env.IMAGE }}:latest
-            ${{ env.IMAGE }}:${{ github.sha }}
+          tags: ${{ steps.tags.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -45,10 +58,27 @@ jobs:
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Bake image tag into chart
-        run: |
-          sed -i "s/tag: latest/tag: ${{ github.sha }}/" deploy/values.yaml
-          sed -i "s/appVersion: .*/appVersion: \"${{ github.sha }}\"/" deploy/Chart.yaml
+        run: sed -i "s/tag: latest/tag: ${{ github.sha }}/" deploy/values.yaml
 
-      - run: |
+      - name: Publish SHA-versioned chart
+        run: |
+          sed -i "s/^version: .*/version: 0.0.0-${{ github.sha }}/" deploy/Chart.yaml
           helm package deploy/
-          helm push journal-*.tgz oci://ghcr.io/f1nnm/journal-charts
+          helm push journal-*.tgz ${{ env.CHART_REPO }}
+          rm journal-*.tgz
+
+      - name: Publish rolling latest chart
+        run: |
+          sed -i "s/^version: .*/version: 0.0.0/" deploy/Chart.yaml
+          helm package deploy/
+          helm push journal-*.tgz ${{ env.CHART_REPO }}
+          rm journal-*.tgz
+
+      - name: Publish release chart
+        if: github.event_name == 'release'
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+          sed -i "s/^version: .*/version: $VERSION/" deploy/Chart.yaml
+          helm package deploy/
+          helm push journal-*.tgz ${{ env.CHART_REPO }}
