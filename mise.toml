@@ -1,0 +1,15 @@
+[tools]
+node = "22"
+tilt = "latest"
+ctlptl = "latest"
+
+[tasks.start]
+dir = "."
+run = """
+ctlptl apply -f tilt/cluster.yaml
+tilt up
+"""
+
+[tasks.stop]
+dir = "."
+run = "ctlptl delete -f tilt/cluster.yaml"
