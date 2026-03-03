@@ -3,7 +3,10 @@ import { eq, and, sql, gte, lt } from 'drizzle-orm'
 import { entries } from '../../database/schema'
 import { protectedProcedure, router } from '../init'
 
-const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
+const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(
+  (s) => !isNaN(new Date(s).getTime()),
+  'Invalid date',
+)
 
 export const entriesRouter = router({
   save: protectedProcedure

@@ -11,7 +11,7 @@ export const db = new Proxy({} as PostgresJsDatabase<typeof schema>, {
       if (!url) {
         throw new Error('DATABASE_URL is not configured')
       }
-      _db = drizzle(postgres(url), { schema })
+      _db = drizzle(postgres(url, { connection: { statement_timeout: 5000 } }), { schema })
     }
     return (_db as any)[prop]
   },
