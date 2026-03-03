@@ -25,16 +25,20 @@ export default defineNuxtConfig({
   },
   pwa: {
     registerType: 'autoUpdate',
+    includeAssets: ['apple-touch-icon.png'],
     manifest: {
       name: 'Journal',
       short_name: 'Journal',
       description: 'A minimalist personal journal',
+      start_url: '/',
+      scope: '/',
       theme_color: '#1c1917',
       background_color: '#1c1917',
       display: 'standalone',
       icons: [
         { src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' },
-        { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+        { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+        { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
       ],
     },
     workbox: {
