@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const config = useRuntimeConfig()
-const authUrl = config.public.oidcEnabled ? '/auth/oidc' : '/auth/dev'
+const oidcEnabled = useOidcEnabled()
+const authUrl = computed(() => oidcEnabled.value ? '/auth/oidc' : '/auth/dev')
 </script>
 
 <template>

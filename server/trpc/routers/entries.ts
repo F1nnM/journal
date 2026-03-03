@@ -3,10 +3,12 @@ import { eq, and, sql, gte, lt } from 'drizzle-orm'
 import { entries } from '../../database/schema'
 import { protectedProcedure, router } from '../init'
 
+const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
+
 export const entriesRouter = router({
   save: protectedProcedure
     .input(z.object({
-      date: z.string(),
+      date: dateString,
       content: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
@@ -30,7 +32,7 @@ export const entriesRouter = router({
 
   getByDate: protectedProcedure
     .input(z.object({
-      date: z.string(),
+      date: dateString,
     }))
     .query(async ({ ctx, input }) => {
       const [entry] = await ctx.db

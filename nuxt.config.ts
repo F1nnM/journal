@@ -13,8 +13,6 @@ export default defineNuxtConfig({
         redirectURL: '',
       },
     },
-    public: {
-      oidcEnabled: '',
-    },
+    public: {},
   },
 })
