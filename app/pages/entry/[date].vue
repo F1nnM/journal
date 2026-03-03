@@ -95,6 +95,27 @@ watch(editing, (isEditing) => {
   }
 })
 
+// Lock entry when mobile keyboard is dismissed
+let viewportHeight = 0
+function onViewportResize() {
+  const newHeight = window.visualViewport!.height
+  if (editing.value && newHeight > viewportHeight * 1.15) {
+    immediateSave()
+    textareaRef.value?.blur()
+    editing.value = false
+  }
+  viewportHeight = newHeight
+}
+onMounted(() => {
+  if (window.visualViewport) {
+    viewportHeight = window.visualViewport.height
+    window.visualViewport.addEventListener('resize', onViewportResize)
+  }
+})
+onUnmounted(() => {
+  window.visualViewport?.removeEventListener('resize', onViewportResize)
+})
+
 const saveStatusText = computed(() => {
   switch (saveStatus.value) {
     case 'saving': return 'Saving...'
@@ -143,7 +164,6 @@ const saveStatusText = computed(() => {
           class="min-h-full w-full resize-none bg-transparent px-6 py-2 text-lg leading-relaxed text-stone-700 placeholder-stone-300 outline-none dark:text-stone-200 dark:placeholder-stone-600"
           placeholder="Write something..."
           @input="onInput"
-          @blur="immediateSave(); editing = false"
         />
 
         <!-- Read mode -->
