@@ -56,15 +56,6 @@ const { status: saveStatus, pending: savePending, debouncedSave, immediateSave }
 
 function onInput() {
   debouncedSave()
-  autoResize()
-}
-
-function autoResize() {
-  const el = textareaRef.value
-  if (el) {
-    el.style.height = 'auto'
-    el.style.height = el.scrollHeight + 'px'
-  }
 }
 
 async function toggleMode() {
@@ -91,7 +82,6 @@ watch(editing, (isEditing) => {
   if (isEditing) {
     nextTick(() => {
       textareaRef.value?.focus()
-      autoResize()
     })
   }
 })
@@ -125,7 +115,7 @@ const dotColor = computed(() => {
 </script>
 
 <template>
-  <div class="flex h-dvh flex-col bg-stone-50 dark:bg-stone-900">
+  <div class="flex h-dvh flex-col overflow-hidden bg-stone-50 dark:bg-stone-900">
     <!-- Header -->
     <div class="flex items-center justify-between px-6 pb-2 pt-4">
       <span class="text-sm text-stone-400 dark:text-stone-500">
@@ -135,7 +125,7 @@ const dotColor = computed(() => {
     </div>
 
     <!-- Content area -->
-    <div class="flex-1 overflow-y-auto pb-20">
+    <div class="flex min-h-0 flex-1 flex-col" :class="editing ? 'overflow-hidden' : 'overflow-y-auto pb-20'">
       <div v-if="fetchStatus === 'pending'" class="px-6 py-12 text-center text-stone-400 dark:text-stone-500">
         Loading...
       </div>
@@ -146,7 +136,7 @@ const dotColor = computed(() => {
           v-if="editing"
           ref="textareaRef"
           v-model="content"
-          class="min-h-full w-full resize-none bg-transparent px-6 py-2 text-lg leading-relaxed text-stone-700 placeholder-stone-300 outline-none dark:text-stone-200 dark:placeholder-stone-600"
+          class="min-h-0 flex-1 w-full resize-none overflow-y-auto bg-transparent px-6 py-2 pb-20 text-lg leading-relaxed text-stone-700 placeholder-stone-300 outline-none dark:text-stone-200 dark:placeholder-stone-600"
           placeholder="Write something..."
           @input="onInput"
         />
