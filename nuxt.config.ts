@@ -27,6 +27,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       meta: [
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, interactive-widget=resizes-content' },
         { name: 'theme-color', content: '#1c1917' },
       ],
       link: [

@@ -77,7 +77,6 @@ function goBack() {
 }
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
-const containerRef = ref<HTMLElement | null>(null)
 
 watch(editing, (isEditing) => {
   if (isEditing) {
@@ -92,18 +91,10 @@ watch(editing, (isEditing) => {
   }
 })
 
-// Pin container to the visual viewport so the keyboard can't push the header off-screen
+// Lock entry when mobile keyboard is dismissed
 let viewportHeight = 0
-function onViewportChange() {
-  const vv = window.visualViewport!
-  const newHeight = vv.height
-
-  if (containerRef.value) {
-    containerRef.value.style.height = `${newHeight}px`
-    containerRef.value.style.top = `${vv.offsetTop}px`
-  }
-
-  // Lock entry when mobile keyboard is dismissed
+function onViewportResize() {
+  const newHeight = window.visualViewport!.height
   if (editing.value && newHeight > viewportHeight * 1.15) {
     immediateSave()
     textareaRef.value?.blur()
@@ -114,15 +105,11 @@ function onViewportChange() {
 onMounted(() => {
   if (window.visualViewport) {
     viewportHeight = window.visualViewport.height
-    window.visualViewport.addEventListener('resize', onViewportChange)
-    window.visualViewport.addEventListener('scroll', onViewportChange)
+    window.visualViewport.addEventListener('resize', onViewportResize)
   }
 })
 onUnmounted(() => {
-  if (window.visualViewport) {
-    window.visualViewport.removeEventListener('resize', onViewportChange)
-    window.visualViewport.removeEventListener('scroll', onViewportChange)
-  }
+  window.visualViewport?.removeEventListener('resize', onViewportResize)
 })
 
 const dotColor = computed(() => {
@@ -133,7 +120,7 @@ const dotColor = computed(() => {
 </script>
 
 <template>
-  <div ref="containerRef" class="fixed inset-x-0 top-0 flex h-dvh flex-col overflow-hidden bg-stone-50 dark:bg-stone-900">
+  <div class="flex h-full flex-col overflow-hidden bg-stone-50 dark:bg-stone-900">
     <!-- Header -->
     <div class="flex items-center justify-between px-6 pb-2 pt-4">
       <span class="text-sm text-stone-400 dark:text-stone-500">
@@ -143,7 +130,7 @@ const dotColor = computed(() => {
     </div>
 
     <!-- Content area -->
-    <div class="flex min-h-0 flex-1 flex-col" :class="editing ? 'overflow-hidden' : 'overflow-y-auto pb-20'">
+    <div class="min-h-0 flex-1" :class="editing ? 'grid overflow-hidden' : 'overflow-y-auto pb-20'">
       <div v-if="fetchStatus === 'pending'" class="px-6 py-12 text-center text-stone-400 dark:text-stone-500">
         Loading...
       </div>
@@ -154,7 +141,7 @@ const dotColor = computed(() => {
           v-if="editing"
           ref="textareaRef"
           v-model="content"
-          class="min-h-0 flex-1 w-full resize-none overflow-y-auto bg-transparent px-6 py-2 pb-4 text-lg leading-relaxed text-stone-700 placeholder-stone-300 outline-none dark:text-stone-200 dark:placeholder-stone-600"
+          class="min-w-0 resize-none overflow-y-auto bg-transparent px-6 py-2 pb-4 text-lg leading-relaxed text-stone-700 placeholder-stone-300 outline-none dark:text-stone-200 dark:placeholder-stone-600"
           placeholder="Write something..."
           @input="onInput"
         />

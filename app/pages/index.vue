@@ -71,9 +71,9 @@ const isSearching = computed(() => searchQuery.value.trim().length > 0)
 </script>
 
 <template>
-  <div class="flex h-dvh flex-col bg-stone-50 dark:bg-stone-900">
+  <div class="flex h-full flex-col overflow-hidden bg-stone-50 dark:bg-stone-900">
     <!-- Search bar -->
-    <div class="sticky top-0 z-40 border-b border-stone-200 bg-stone-50/80 px-4 pb-3 pt-4 backdrop-blur-lg dark:border-stone-800 dark:bg-stone-900/80">
+    <div class="border-b border-stone-200 bg-stone-50 px-4 pb-3 pt-4 dark:border-stone-800 dark:bg-stone-900">
       <div class="relative">
         <Search
           :size="18"
@@ -90,7 +90,7 @@ const isSearching = computed(() => searchQuery.value.trim().length > 0)
     </div>
 
     <!-- Content area -->
-    <div class="flex-1 overflow-y-auto pb-20 pt-4">
+    <div class="min-h-0 flex-1 overflow-y-auto pb-20 pt-4">
       <Transition name="fade" mode="out-in">
         <div v-if="isSearching" key="search">
           <div v-if="searching" class="py-12 text-center text-stone-400 dark:text-stone-500">

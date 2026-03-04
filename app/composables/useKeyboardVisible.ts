@@ -2,21 +2,20 @@ export function useKeyboardVisible() {
   const keyboardVisible = ref(false)
 
   if (import.meta.client) {
-    const viewport = window.visualViewport
+    let fullHeight = 0
 
-    if (viewport) {
-      const checkKeyboard = () => {
-        keyboardVisible.value = viewport.height < window.innerHeight * 0.8
-      }
-
-      onMounted(() => {
-        viewport.addEventListener('resize', checkKeyboard)
-      })
-
-      onUnmounted(() => {
-        viewport.removeEventListener('resize', checkKeyboard)
-      })
+    const checkKeyboard = () => {
+      keyboardVisible.value = window.innerHeight < fullHeight * 0.8
     }
+
+    onMounted(() => {
+      fullHeight = window.innerHeight
+      window.visualViewport?.addEventListener('resize', checkKeyboard)
+    })
+
+    onUnmounted(() => {
+      window.visualViewport?.removeEventListener('resize', checkKeyboard)
+    })
   }
 
   return { keyboardVisible }
