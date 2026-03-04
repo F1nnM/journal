@@ -82,7 +82,12 @@ const containerRef = ref<HTMLElement | null>(null)
 watch(editing, (isEditing) => {
   if (isEditing) {
     nextTick(() => {
-      textareaRef.value?.focus()
+      const el = textareaRef.value
+      if (el) {
+        el.focus()
+        el.setSelectionRange(el.value.length, el.value.length)
+        el.scrollTop = el.scrollHeight
+      }
     })
   }
 })
@@ -149,7 +154,7 @@ const dotColor = computed(() => {
           v-if="editing"
           ref="textareaRef"
           v-model="content"
-          class="min-h-0 flex-1 w-full resize-none overflow-y-auto bg-transparent px-6 py-2 pb-20 text-lg leading-relaxed text-stone-700 placeholder-stone-300 outline-none dark:text-stone-200 dark:placeholder-stone-600"
+          class="min-h-0 flex-1 w-full resize-none overflow-y-auto bg-transparent px-6 py-2 pb-4 text-lg leading-relaxed text-stone-700 placeholder-stone-300 outline-none dark:text-stone-200 dark:placeholder-stone-600"
           placeholder="Write something..."
           @input="onInput"
         />
