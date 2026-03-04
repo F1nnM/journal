@@ -11,6 +11,7 @@ export default defineNuxtConfig({
       password: '',
       cookie: {
         maxAge: 60 * 60 * 24 * 7, // 7 days
+        secure: process.env.NODE_ENV === 'production',
       },
     },
     oauth: {

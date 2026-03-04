@@ -32,7 +32,7 @@ for _r in _rendered:
 _service_ports = {}
 for _r in _rendered:
     if _r.get('kind') == 'Service':
-        _ports = ['%s:%s' % (p['port'], p['port']) for p in _r.get('spec', {}).get('ports', []) if p.get('port')]
+        _ports = [port_forward(p['port'], p['port'], host='0.0.0.0') for p in _r.get('spec', {}).get('ports', []) if p.get('port')]
         if _ports:
             _service_ports[_r['metadata']['name']] = _ports
 
