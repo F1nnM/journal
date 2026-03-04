@@ -77,6 +77,7 @@ function goBack() {
 }
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const containerRef = ref<HTMLElement | null>(null)
 
 watch(editing, (isEditing) => {
   if (isEditing) {
@@ -86,10 +87,18 @@ watch(editing, (isEditing) => {
   }
 })
 
-// Lock entry when mobile keyboard is dismissed
+// Pin container to the visual viewport so the keyboard can't push the header off-screen
 let viewportHeight = 0
-function onViewportResize() {
-  const newHeight = window.visualViewport!.height
+function onViewportChange() {
+  const vv = window.visualViewport!
+  const newHeight = vv.height
+
+  if (containerRef.value) {
+    containerRef.value.style.height = `${newHeight}px`
+    containerRef.value.style.top = `${vv.offsetTop}px`
+  }
+
+  // Lock entry when mobile keyboard is dismissed
   if (editing.value && newHeight > viewportHeight * 1.15) {
     immediateSave()
     textareaRef.value?.blur()
@@ -100,11 +109,15 @@ function onViewportResize() {
 onMounted(() => {
   if (window.visualViewport) {
     viewportHeight = window.visualViewport.height
-    window.visualViewport.addEventListener('resize', onViewportResize)
+    window.visualViewport.addEventListener('resize', onViewportChange)
+    window.visualViewport.addEventListener('scroll', onViewportChange)
   }
 })
 onUnmounted(() => {
-  window.visualViewport?.removeEventListener('resize', onViewportResize)
+  if (window.visualViewport) {
+    window.visualViewport.removeEventListener('resize', onViewportChange)
+    window.visualViewport.removeEventListener('scroll', onViewportChange)
+  }
 })
 
 const dotColor = computed(() => {
@@ -115,7 +128,7 @@ const dotColor = computed(() => {
 </script>
 
 <template>
-  <div class="flex h-dvh flex-col overflow-hidden bg-stone-50 dark:bg-stone-900">
+  <div ref="containerRef" class="fixed inset-x-0 top-0 flex h-dvh flex-col overflow-hidden bg-stone-50 dark:bg-stone-900">
     <!-- Header -->
     <div class="flex items-center justify-between px-6 pb-2 pt-4">
       <span class="text-sm text-stone-400 dark:text-stone-500">
