@@ -1,0 +1,4 @@
+scaffold:
+  repo: https://github.com/F1nnM/portable
+  path: scaffolds/nuxt-postgres
+  version: c3f746f80853a66d88ed84c401d644c917a1eb53

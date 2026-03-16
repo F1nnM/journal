@@ -60,6 +60,14 @@ export default defineNuxtConfig({
       navigateFallback: undefined,
     },
   },
+  devServer: {
+    host: '0.0.0.0',
+  },
+  vite: {
+    server: {
+      allowedHosts: true,
+    },
+  },
   routeRules: {
     '/**': {
       headers: {
